@@ -19,21 +19,21 @@ class _CameraScreenState extends State<CameraScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    controller = new CameraController(widget.cameras[0], ResolutionPreset.high);
+    controller = CameraController(widget.cameras[0], ResolutionPreset.high);
     cameraValue = controller.initialize();
-    controller.initialize().then((_) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {});
-    });
+    // controller.initialize().then((_) {
+    //   if (!mounted) {
+    //     return;
+    //   }
+    //   setState(() {});
+    // });
   }
 
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   controller.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -42,13 +42,19 @@ class _CameraScreenState extends State<CameraScreen> {
         FutureBuilder(
             future: cameraValue,
             builder: (context, snapshot) {
-              if (!controller.value.isInitialized) {
-                return new Container();
+              if (snapshot.connectionState == ConnectionState.done) {
+                return AspectRatio(
+                    aspectRatio: MediaQuery.of(context).size.aspectRatio,
+                    child: CameraPreview(controller));
+              } else {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
               }
-              return new AspectRatio(
-                aspectRatio: MediaQuery.of(context).size.aspectRatio,
-                child: new CameraPreview(controller),
-              );
+              // return new AspectRatio(
+              //   aspectRatio: MediaQuery.of(context).size.aspectRatio,
+              //   child: new CameraPreview(controller),
+              // );
             }),
         Container(
           color: Colors.transparent,
